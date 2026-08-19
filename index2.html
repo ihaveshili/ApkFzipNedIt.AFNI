@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes">
+  <title>谱面下载站 · 音游资源</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+    }
+
+    body {
+      background: #0f1117;
+      min-height: 100vh;
+      padding: 1.8rem 1.2rem;
+      color: #eef2f7;
+    }
+
+    .container {
+      max-width: 1340px;
+      margin: 0 auto;
+    }
+
+    /* 头部 ———— 故意不对称 */
+    .header {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2.2rem;
+      gap: 1rem;
+      border-bottom: 1px solid #2a2d37;
+      padding-bottom: 1.2rem;
+    }
+
+    .logo h1 {
+      font-size: 2.4rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, #b388ff, #82b1ff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      letter-spacing: -0.5px;
+      display: inline-block;
+      transform: rotate(-0.5deg);
+    }
+
+    .logo span {
+      font-size: 0.95rem;
+      font-weight: 400;
+      background: none;
+      -webkit-text-fill-color: #8e96a8;
+      margin-left: 0.5rem;
+      letter-spacing: 0.3px;
+      opacity: 0.8;
+    }
+
+    .nav-tabs {
+      display: flex;
+      gap: 0.4rem;
+      flex-wrap: wrap;
+      background: #181d27;
+      padding: 0.3rem;
+      border-radius: 60px;
+      border: 1px solid #282e3d;
+    }
+
+    .nav-tab {
+      padding: 0.5rem 1.4rem;
+      border-radius: 60px;
+      background: transparent;
+      color: #b0b8c9;
+      font-weight: 500;
+      font-size: 0.9rem;
+      cursor: default;
+      transition: 0.2s;
+      border: none;
+    }
+
+    .nav-tab.active {
+      background: #2b2f3c;
+      color: #ffffff;
+      box-shadow: 0 0 12px rgba(130, 177, 255, 0.08);
+    }
+
+    .nav-tab.disabled {
+      opacity: 0.4;
+      filter: grayscale(0.5);
+      pointer-events: none;
+    }
+
+    .badge {
+      background: #323a4a;
+      font-size: 0.65rem;
+      padding: 0.1rem 0.6rem;
+      border-radius: 30px;
+      margin-left: 5px;
+      color: #bcc6db;
+    }
+
+    /* 搜索栏 ———— 更随意 */
+    .search-bar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.5rem;
+      margin: 0.2rem 0 2rem 0;
+      background: #161b24;
+      padding: 0.3rem 0.8rem 0.3rem 1.5rem;
+      border-radius: 40px;
+      border: 1px solid #2b3140;
+      transition: 0.2s;
+    }
+    .search-bar:focus-within {
+      border-color: #6a7fa8;
+      box-shadow: 0 0 0 3px rgba(100, 150, 255, 0.1);
+    }
+    .search-bar input {
+      flex: 1;
+      background: transparent;
+      border: none;
+      padding: 0.6rem 0;
+      color: #e4eaf5;
+      font-size: 0.95rem;
+      outline: none;
+      min-width: 120px;
+    }
+    .search-bar input::placeholder {
+      color: #5e6a82;
+      font-weight: 300;
+      font-style: italic;
+    }
+    .search-bar .search-icon {
+      color: #6c7b99;
+      font-size: 1rem;
+      opacity: 0.6;
+    }
+    .search-bar .clear-btn {
+      background: none;
+      border: none;
+      color: #6c7b99;
+      font-size: 1rem;
+      cursor: pointer;
+      padding: 0 0.2rem;
+      display: none;
+    }
+    .search-bar .clear-btn.visible {
+      display: block;
+    }
+    .search-bar .clear-btn:hover {
+      color: #bccae6;
+    }
+    .search-count {
+      font-size: 0.75rem;
+      color: #7e8aa6;
+      margin-left: 0.2rem;
+      white-space: nowrap;
+      background: #1f2532;
+      padding: 0.15rem 0.7rem;
+      border-radius: 30px;
+    }
+
+    /* 区域标题 ———— 带点装饰 */
+    .section-title {
+      display: flex;
+      align-items: baseline;
+      gap: 0.6rem;
+      margin: 2rem 0 1.2rem 0;
+      flex-wrap: wrap;
+      border-left: 3px solid #5a6c92;
+      padding-left: 1rem;
+    }
+
+    .section-title h2 {
+      font-weight: 600;
+      font-size: 1.7rem;
+      letter-spacing: -0.3px;
+      color: #e8edf9;
+    }
+
+    .section-title .count {
+      background: #252a36;
+      padding: 0.1rem 0.9rem;
+      border-radius: 40px;
+      font-size: 0.8rem;
+      color: #aab3c9;
+      font-weight: 400;
+    }
+
+    .empty-hint {
+      color: #6d768b;
+      font-style: italic;
+      padding: 1.2rem 0 0.5rem;
+      border-top: 1px dashed #2b2f3b;
+      text-align: center;
+      grid-column: 1 / -1;
+      font-size: 0.95rem;
+    }
+
+    /* 卡片网格 ———— 瀑布流风格，错落有致 */
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 1.5rem 1.2rem;
+      margin-top: 0.3rem;
+    }
+
+    /* 卡片随机风格：不同内边距、圆角、边框色微差 */
+    .card {
+      background: #181c26;
+      border-radius: 20px 20px 24px 20px;
+      padding: 1.4rem 1.2rem 1.6rem;
+      border: 1px solid #2a2f3d;
+      transition: 0.25s ease;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 6px 14px rgba(0, 0, 0, 0.4);
+      backdrop-filter: blur(2px);
+      position: relative;
+    }
+
+    /* 让卡片看起来不是完全统一 */
+    .card:nth-child(3n+1) {
+      border-radius: 24px 16px 24px 16px;
+      background: #191e2a;
+      border-color: #323b50;
+    }
+    .card:nth-child(5n+2) {
+      border-radius: 16px 24px 16px 24px;
+      background: #1a1f2b;
+      padding: 1.6rem 1.2rem 1.4rem;
+    }
+    .card:nth-child(7n+4) {
+      border-left: 3px solid #5a6c92;
+    }
+
+    .card:hover {
+      border-color: #6a7da8;
+      transform: translateY(-4px) scale(1.003);
+      background: #1e2330;
+      box-shadow: 0 16px 28px rgba(0, 0, 0, 0.6);
+    }
+
+    .card .name {
+      font-size: 1.2rem;
+      font-weight: 600;
+      line-height: 1.4;
+      margin-bottom: 0.2rem;
+      color: #f0f4ff;
+      word-break: break-word;
+    }
+
+    .card .meta {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      margin: 0.4rem 0 1rem;
+      font-size: 0.8rem;
+      color: #9aa4be;
+      border-bottom: 1px solid #282e3d;
+      padding-bottom: 0.6rem;
+    }
+
+    .card .level {
+      background: #262d3d;
+      padding: 0.1rem 0.8rem;
+      border-radius: 30px;
+      font-size: 0.7rem;
+      font-weight: 500;
+      color: #c8d2ea;
+      letter-spacing: 0.2px;
+      white-space: nowrap;
+      border: 1px solid #343d55;
+    }
+
+    .card .link-btn {
+      display: inline-block;
+      background: #2b354b;
+      color: white;
+      text-align: center;
+      padding: 0.6rem 0.5rem;
+      border-radius: 40px 12px 40px 12px;
+      font-weight: 500;
+      font-size: 0.9rem;
+      text-decoration: none;
+      margin-top: 0.2rem;
+      transition: 0.2s;
+      border: 1px solid #3d4a66;
+      letter-spacing: 0.2px;
+      width: 100%;
+      background: #2b354b;
+    }
+
+    .card .link-btn:hover {
+      background: #3f4d6e;
+      border-color: #7b8fc0;
+      box-shadow: 0 0 16px rgba(100, 150, 255, 0.15);
+      border-radius: 12px 40px 12px 40px;
+    }
+
+    .card .link-btn:active {
+      transform: scale(0.97);
+   
